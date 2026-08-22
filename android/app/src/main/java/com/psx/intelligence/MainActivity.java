@@ -266,8 +266,6 @@ void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE IF NOT EXISTS watch(id INTEGER PRIMARY KEY AUTOINCREMENT,symbol TEXT,alert REAL)");
     }
     public void onUpgrade(SQLiteDatabase db,int a,int b){}
-    void addTrade(String s,double q,double p){getWritableDatabase().execSQL("INSERT INTO portfolio(symbol,qty,buy,date) VALUES(?,?,?,?)",new Object[]{s,q,p,new Date().toString()});}
-    void addSignal(String s,String sig){getWritableDatabase().execSQL("INSERT INTO signals(symbol,signal,result,date) VALUES(?,?,?,?)",new Object[]{s,sig,"OPEN",new Date().toString()});}
     double pnl(String s,double price){Cursor c=getReadableDatabase().rawQuery("SELECT qty,buy FROM portfolio WHERE symbol=?",new String[]{s});double r=0;while(c.moveToNext())r+=(price-c.getDouble(1))*c.getDouble(0);c.close();return r;}
 }
 
