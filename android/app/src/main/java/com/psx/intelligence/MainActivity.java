@@ -1,5 +1,8 @@
 package com.psx.intelligence;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 import android.app.*;import android.os.*;import android.database.sqlite.*;import android.speech.tts.TextToSpeech;import android.graphics.*;import android.graphics.drawable.GradientDrawable;import android.content.*;import android.net.Uri;import android.text.*;import android.view.*;import android.view.inputmethod.EditorInfo;import android.widget.*;
 import org.json.*;import java.io.*;import java.net.*;import java.text.*;import java.util.*;import java.util.concurrent.*;
 
@@ -604,6 +607,28 @@ String fundamentalInterpretation(String plain){
 
 String extractMetric(String p,String key){
     return "";
+}
+
+
+
+android.database.sqlite.SQLiteOpenHelper dbHelper;
+
+android.database.sqlite.SQLiteDatabase getReadableDatabase(){
+    if(dbHelper==null){
+        dbHelper=new android.database.sqlite.SQLiteOpenHelper(this,"psx.db",null,1){
+            public void onCreate(android.database.sqlite.SQLiteDatabase db){
+                db.execSQL("CREATE TABLE IF NOT EXISTS portfolio(symbol TEXT,qty REAL,buy REAL,date TEXT)");
+                db.execSQL("CREATE TABLE IF NOT EXISTS signals(symbol TEXT,signal TEXT,result TEXT,date TEXT)");
+            }
+            public void onUpgrade(android.database.sqlite.SQLiteDatabase db,int o,int n){}
+        };
+    }
+    return dbHelper.getReadableDatabase();
+}
+
+android.database.sqlite.SQLiteDatabase getWritableDatabase(){
+    if(dbHelper==null) getReadableDatabase();
+    return dbHelper.getWritableDatabase();
 }
 
 }
