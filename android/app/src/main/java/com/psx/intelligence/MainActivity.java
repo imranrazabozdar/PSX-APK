@@ -9,7 +9,11 @@ import org.json.*;import java.io.*;import java.net.*;import java.text.*;import j
 
 class PortfolioDB extends SQLiteOpenHelper {
     PortfolioDB(Context c){super(c,"psx_intelligence.db",null,1);}
-    public class MainActivity extends Activity {
+    public void onCreate(SQLiteDatabase db){}
+    public void onUpgrade(SQLiteDatabase db,int a,int b){}
+}
+
+public class MainActivity extends Activity {
  final int BG=Color.rgb(7,10,15),CARD=Color.rgb(17,22,30),CARD2=Color.rgb(23,29,39),MUTED=Color.rgb(145,154,168),TEXT=Color.rgb(242,245,249),GREEN=Color.rgb(70,224,166),RED=Color.rgb(255,101,110),ACCENT=Color.rgb(110,239,190),GOLD=Color.rgb(244,193,92);
  LinearLayout root,content,nav; TextView status,title; PortfolioDB portfolioDB; EditText search; Switch shariah; ArrayList<Stock> all=new ArrayList<>(); ExecutorService pool=Executors.newFixedThreadPool(2); Handler h=new Handler(Looper.getMainLooper()); Runnable autoRefresh; SharedPreferences prefs; TextToSpeech tts;
  String screen="HOME", sort="SCORE", sector="ALL"; boolean onlyGainers=false, onlyMomentum=false; double minVolume=50000;
@@ -374,5 +378,4 @@ String extractMetric(String p,String key){
     return "";
 }
 
-}
 }
