@@ -256,6 +256,15 @@ void showIntel(Stock s,LinearLayout box,String mode){
    String result=z.toString();h.post(()->out.setText(result));
   }catch(Exception e){h.post(()->out.setText("Native fundamentals could not be parsed right now. Use the Official PSX Fundamentals button below to view the source directly."));}});}
  String extractMetric(String p,String key){try{java.util.regex.Matcher m=java.util.regex.Pattern.compile("(?im)^\\\\s*"+java.util.regex.Pattern.quote(key)+"(?: \\\\(%\\\\))?\\\\s*[:|]?\\\\s*([^\\\|]{1,40})").matcher(p);if(m.find()){String v=m.group(1).trim();if(!v.equalsIgnoreCase("Annual")&&!v.equalsIgnoreCase("Quarterly"))return v;}}catch(Exception e){}return "";}
+ String fundamentalInterpretation(String plain){
+    StringBuilder z=new StringBuilder();
+    z.append("OFFICIAL PSX FUNDAMENTALS\\n");
+    z.append("Source: PSX company page • values are shown only when present in the source.\\n");
+    z.append("Use fundamentals together with price action and risk management.");
+    return z.toString();
+}
+
+String extractMetric(String p,String key){try{java.util.regex.Matcher m=java.util.regex.Pattern.compile("(?im)^\\\\s*"+java.util.regex.Pattern.quote(key)+"(?: \\\\(%\\\\))?\\\\s*[:|]?\\\\s*([^\\\|]{1,40})").matcher(p);if(m.find()){String v=m.group(1).trim();if(!v.equalsIgnoreCase("Annual")&&!v.equalsIgnoreCase("Quarterly"))return v;}}catch(Exception e){}return "";}
  String fundamentalInterpretation(String p){String low=p.toLowerCase(Locale.US);ArrayList<String>a=new ArrayList<>();if(low.contains("eps growth"))a.add("• EPS growth history is available for trend review.");if(low.contains("net profit margin"))a.add("• Profit-margin history is available; compare direction across years.");if(low.contains("gross profit margin"))a.add("• Gross-margin history is available for operating-quality context.");if(low.contains("quarterly"))a.add("• Quarterly results are available for recent momentum.");if(low.contains("dividend"))a.add("• Dividend/distribution disclosures may be available on the company page.");if(a.isEmpty())a.add("• PSX page has limited standardized fundamentals for this security.");a.add("• V2 does not convert missing fields into zeros or invent valuation ratios.");StringBuilder b=new StringBuilder();for(String q:a)b.append(q).append("");return b.toString().trim();}
  void loadHistory(Stock s,LinearLayout box,TextView statusV){pool.submit(()->{try{ArrayList<Bar>bars=fetchHistory(s.s);h.post(()->{statusV.setText(bars.size()+" sessions • "+historySource(bars)+""+technicalEngine(bars)+" • drag/tap chart for value");ChartView cv=new ChartView(this,bars);box.addView(cv,new LinearLayout.LayoutParams(-1,dp(230)));});}catch(Exception e){h.post(()->statusV.setText("Historical chart unavailable from PSX/Yahoo sources and no local cache is available."));}});}
  ArrayList<Bar> fetchHistory(String sym)throws Exception{
