@@ -601,13 +601,9 @@ z.append("Interpretation").append(fundamentalInterpretation(plain)).append(" Sou
  }
 
 
-String fundamentalInterpretation(String plain){
-    return "OFFICIAL PSX FUNDAMENTALS\\nSource: PSX company page. Values shown when available.";
-}
 
-String extractMetric(String p,String key){
-    return "";
-}
+
+
 
 
 
@@ -621,6 +617,33 @@ android.database.sqlite.SQLiteDatabase getReadableDatabase(){
                 db.execSQL("CREATE TABLE IF NOT EXISTS signals(symbol TEXT,signal TEXT,result TEXT,date TEXT)");
             }
             public void onUpgrade(android.database.sqlite.SQLiteDatabase db,int o,int n){}
+        };
+    }
+    return dbHelper.getReadableDatabase();
+}
+
+android.database.sqlite.SQLiteDatabase getWritableDatabase(){
+    if(dbHelper==null) getReadableDatabase();
+    return dbHelper.getWritableDatabase();
+}
+
+
+String fundamentalInterpretation(String plain){
+    return "OFFICIAL PSX FUNDAMENTALS - Source: PSX company page. Values shown when available.";
+}
+
+String extractMetric(String p,String key){
+    return "";
+}
+
+android.database.sqlite.SQLiteDatabase getReadableDatabase(){
+    if(dbHelper==null){
+        dbHelper=new android.database.sqlite.SQLiteOpenHelper(this,"psx.db",null,1){
+            public void onCreate(android.database.sqlite.SQLiteDatabase db){
+                db.execSQL("CREATE TABLE IF NOT EXISTS portfolio(symbol TEXT,qty REAL,buy REAL,date TEXT)");
+                db.execSQL("CREATE TABLE IF NOT EXISTS signals(symbol TEXT,signal TEXT,result TEXT,date TEXT)");
+            }
+            public void onUpgrade(android.database.sqlite.SQLiteDatabase db,int oldV,int newV){}
         };
     }
     return dbHelper.getReadableDatabase();
