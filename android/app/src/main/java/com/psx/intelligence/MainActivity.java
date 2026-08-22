@@ -69,11 +69,43 @@ status=tv("Connecting…",10,MUTED);head.addView(status);root.addView(head);
  void render(){content.removeAllViews();if(screen.equals("HOME"))home();else if(screen.equals("SCREENER"))scanner();else if(screen.equals("PULSE"))markets();else if(screen.equals("INTEL"))intelligence();else if(screen.equals("PORTFOLIO"))portfolioDashboard();else more();}
  void hero(String a,String b){LinearLayout c=card();c.addView(bold(a,25,TEXT));c.addView(tv(b,12,MUTED));content.addView(c);}
  ArrayList<Stock> filtered(){ArrayList<Stock>f=new ArrayList<>();String q=search==null?"":search.getText().toString().trim().toUpperCase();for(Stock s:all){if(shariah!=null&&shariah.isChecked()&&!s.sh)continue;if(!sector.equals("ALL")&&!s.sector.equals(sector))continue;if(onlyGainers&&s.pct<=0)continue;if(s.vol<minVolume)continue;if(onlyMomentum&&!s.setup.toLowerCase().contains("momentum"))continue;if(q.length()>0&&!s.s.contains(q))continue;f.add(s);}Comparator<Stock>cmp=sort.equals("CHANGE")?(a,b)->Double.compare(b.pct,a.pct):sort.equals("VOLUME")?(a,b)->Double.compare(b.vol,a.vol):(a,b)->Double.compare(b.score,a.score);Collections.sort(f,cmp);return f;}
- void home(){hero("Command Center","Full PSX intelligence • tap any security to drill down");if(all.isEmpty()){content.addView(tv("  Loading market…",14,MUTED));return;}int adv=0,dec=0;double vv=0;for(Stock s:all){if(s.pct>0)adv++;if(s.pct<0)dec++;vv+=s.vol;}LinearLayout pulse=card();pulse.addView(tv("MARKET BREADTH",11,MUTED));double breadth=100.0*adv/Math.max(1,adv+dec);pulse.addView(bold(String.format(Locale.US,"%.0f%%  %s",breadth,breadth>=55?"RISK-ON":breadth<45?"DEFENSIVE":"MIXED"),24,breadth>=55?GREEN:breadth<45?RED:GOLD));pulse.addView(tv(adv+" advancing  •  "+dec+" declining  •  "+all.size()+" securities",12,MUTED));content.addView(pulse);\n  LinearLayout intel=card();\n  intel.addView(tv("V3.6 MARKET INTELLIGENCE",11,GOLD));\n  String mood=breadth>=60?"Broad buying pressure":breadth<=40?"Defensive selling":"Balanced participation";\n  intel.addView(bold(mood,18,TEXT));\n  intel.addView(tv("Advancers vs decliners, liquidity and price behaviour are combined into the current market state. Always confirm with risk management.",12,MUTED));\n  content.addView(intel);
-  LinearLayout quick=card();quick.addView(bold("Quick actions",15,TEXT));LinearLayout r=new LinearLayout(this);String[] q={"Search stocks","Top movers","Shariah","Momentum"};for(String x:q){Button b=btn(x);b.setOnClickListener(v->{if(x.equals("Search stocks")){showStockSearch();return;}screen="SCREENER";if(x.equals("Top movers"))sort="CHANGE";if(x.equals("Shariah"))prefs.edit().putBoolean("quickSh",true).apply();if(x.equals("Momentum"))onlyMomentum=true;render();});r.addView(b,new LinearLayout.LayoutParams(0,dp(46),1));}quick.addView(r);content.addView(quick);
-  TextView t=bold("  TOP OPPORTUNITIES",17,TEXT);t.setPadding(dp(14),dp(12),0,dp(4));content.addView(t);ArrayList<Stock> f=new ArrayList<>();for(Stock z:all)if(z.vol>=50000)f.add(z);Collections.sort(f,(a,b)->Double.compare(b.score,a.score));for(int i=0;i<Math.min(12,f.size());i++)content.addView(stockCard(f.get(i),i+1));
- }
- void scanner(){hero("Opportunity Scanner","Default shortlist requires ≥50K shares volume • search, filter and rank PSX");LinearLayout c=card();search=new EditText(this);search.setHint("Search symbol");search.setHintTextColor(MUTED);search.setTextColor(TEXT);search.setSingleLine(true);search.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int b,int d){}public void onTextChanged(CharSequence s,int a,int b,int d){renderResults();}public void afterTextChanged(Editable e){}});c.addView(search,new LinearLayout.LayoutParams(-1,dp(48)));shariah=new Switch(this);shariah.setText("Shariah only");shariah.setTextColor(TEXT);shariah.setChecked(prefs.getBoolean("quickSh",false));prefs.edit().remove("quickSh").apply();shariah.setOnCheckedChangeListener((a,b)->renderResults());c.addView(shariah);
+ void home(){
+    hero("Command Center","Full PSX intelligence • tap any security to drill down");
+    if(all.isEmpty()){
+        content.addView(tv("  Loading market…",14,MUTED));
+        return;
+    }
+    int adv=0,dec=0;
+    double vv=0;
+    for(Stock s:all){
+        if(s.pct>0)adv++;
+        if(s.pct<0)dec++;
+        vv+=s.vol;
+    }
+
+    LinearLayout pulse=card();
+    pulse.addView(tv("MARKET BREADTH",11,MUTED));
+    double breadth=100.0*adv/Math.max(1,adv+dec);
+    pulse.addView(bold(String.format(Locale.US,"%.0f%% %s",
+        breadth,
+        breadth>=55?"RISK-ON":breadth<45?"DEFENSIVE":"MIXED"),
+        24,
+        breadth>=55?GREEN:breadth<45?RED:GOLD));
+    pulse.addView(tv(adv+" advancing • "+dec+" declining • "+all.size()+" securities",12,MUTED));
+    content.addView(pulse);
+
+    LinearLayout intel=card();
+    intel.addView(tv("V3.6 MARKET INTELLIGENCE",11,GOLD));
+    String mood=breadth>=60?"Broad buying pressure":breadth<=40?"Defensive selling":"Balanced participation";
+    intel.addView(bold(mood,18,TEXT));
+    intel.addView(tv("Advancers vs decliners, liquidity and price behaviour are combined into the current market state. Always confirm with risk management.",12,MUTED));
+    content.addView(intel);
+
+    LinearLayout quick=card();
+    quick.addView(bold("Quick actions",15,TEXT));
+    content.addView(quick);
+}
+void scanner(){hero("Opportunity Scanner","Default shortlist requires ≥50K shares volume • search, filter and rank PSX");LinearLayout c=card();search=new EditText(this);search.setHint("Search symbol");search.setHintTextColor(MUTED);search.setTextColor(TEXT);search.setSingleLine(true);search.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int b,int d){}public void onTextChanged(CharSequence s,int a,int b,int d){renderResults();}public void afterTextChanged(Editable e){}});c.addView(search,new LinearLayout.LayoutParams(-1,dp(48)));shariah=new Switch(this);shariah.setText("Shariah only");shariah.setTextColor(TEXT);shariah.setChecked(prefs.getBoolean("quickSh",false));prefs.edit().remove("quickSh").apply();shariah.setOnCheckedChangeListener((a,b)->renderResults());c.addView(shariah);
   LinearLayout r=new LinearLayout(this);Button bs=btn("Score");bs.setOnClickListener(v->{sort="SCORE";renderResults();});Button bc=btn("% Change");bc.setOnClickListener(v->{sort="CHANGE";renderResults();});Button bv=btn("Volume");bv.setOnClickListener(v->{sort="VOLUME";renderResults();});r.addView(bs,new LinearLayout.LayoutParams(0,dp(44),1));r.addView(bc,new LinearLayout.LayoutParams(0,dp(44),1));r.addView(bv,new LinearLayout.LayoutParams(0,dp(44),1));c.addView(r);
   LinearLayout r2=new LinearLayout(this);Button g=btn(onlyGainers?"✓ Gainers":"Gainers");g.setOnClickListener(v->{onlyGainers=!onlyGainers;render();});Button m=btn(onlyMomentum?"✓ Momentum":"Momentum");m.setOnClickListener(v->{onlyMomentum=!onlyMomentum;render();});Button clear=btn("Clear");clear.setOnClickListener(v->{onlyGainers=false;onlyMomentum=false;sector="ALL";sort="SCORE";render();});r2.addView(g,new LinearLayout.LayoutParams(0,dp(44),1));r2.addView(m,new LinearLayout.LayoutParams(0,dp(44),1));r2.addView(clear,new LinearLayout.LayoutParams(0,dp(44),1));c.addView(r2);
   LinearLayout vr=new LinearLayout(this);String[] vl={"50K","100K","250K","500K","1M"};double[] vv={50000,100000,250000,500000,1000000};for(int i=0;i<vl.length;i++){final double mv=vv[i];Button vb=btn((minVolume==mv?"✓ ":"")+vl[i]);vb.setOnClickListener(v->{minVolume=mv;render();});vr.addView(vb,new LinearLayout.LayoutParams(0,dp(42),1));}c.addView(vr);
