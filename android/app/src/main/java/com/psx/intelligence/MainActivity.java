@@ -270,7 +270,23 @@ z.append("Interpretation").append(fundamentalInterpretation(plain)).append(" Sou
    ArrayList<Bar>out=new ArrayList<>();if(ts!=null&&cl!=null)for(int i=0;i<ts.length();i++){if(cl.isNull(i))continue;double cc=cl.optDouble(i,Double.NaN);if(Double.isNaN(cc)||cc<=0)continue;double oo=op!=null&&!op.isNull(i)?op.optDouble(i):cc,hh=hi!=null&&!hi.isNull(i)?hi.optDouble(i):cc,ll=lo!=null&&!lo.isNull(i)?lo.optDouble(i):cc,vv=vo!=null&&!vo.isNull(i)?vo.optDouble(i):0;out.add(new Bar(ts.optLong(i)*1000L,oo,hh,ll,cc,vv,"Yahoo Finance • "+sym.toUpperCase(Locale.US)+".KA"));}
    if(out.size()>365)out=new ArrayList<>(out.subList(out.size()-365,out.size()));return out;
  }
- void saveHistoryCache(String sym,ArrayList<Bar>b){try{JSONArray a=new JSONArray();for(Bar x:b){JSONArray z=new JSONArray();z.put(x.t);z.put(x.o);z.put(x.h);z.put(x.l);z.put(x.c);z.put(x.v);z.put(x.src);a.put(z);}JSONObject o=new JSONObject();o.put("saved",System.currentTimeMillis());o.put("rows",a);FileOutputStream f=openFileOutput("hist_"+sym+".json",MODE_PRIVATE);f.write(o.toString().getBytes("UTF-8"));f.close();}catch(Exception e){}}
+ 
+ArrayList<Bar> fetchHistory(String sym)throws Exception{
+    ArrayList<Bar> b=loadHistoryCache(sym);
+    if(b.size()>0)return b;
+    try{
+        b=fetchPsxHistory(sym);
+        if(b.size()>0){
+            saveHistoryCache(sym,b);
+            return b;
+        }
+    }catch(Exception e){}
+    b=fetchYahooHistory(sym);
+    saveHistoryCache(sym,b);
+    return b;
+}
+
+void saveHistoryCache(String sym,ArrayList<Bar>b){try{JSONArray a=new JSONArray();for(Bar x:b){JSONArray z=new JSONArray();z.put(x.t);z.put(x.o);z.put(x.h);z.put(x.l);z.put(x.c);z.put(x.v);z.put(x.src);a.put(z);}JSONObject o=new JSONObject();o.put("saved",System.currentTimeMillis());o.put("rows",a);FileOutputStream f=openFileOutput("hist_"+sym+".json",MODE_PRIVATE);f.write(o.toString().getBytes("UTF-8"));f.close();}catch(Exception e){}}
  ArrayList<Bar> loadHistoryCache(String sym){ArrayList<Bar>out=new ArrayList<>();try{FileInputStream f=openFileInput("hist_"+sym+".json");String raw=read(f);JSONObject o=new JSONObject(raw);JSONArray a=o.getJSONArray("rows");for(int i=0;i<a.length();i++){JSONArray z=a.getJSONArray(i);out.add(new Bar(z.getLong(0),z.getDouble(1),z.getDouble(2),z.getDouble(3),z.getDouble(4),z.getDouble(5),z.optString(6,"Cached history")));}}catch(Exception e){}return out;}
  boolean hasTrueOhlc(ArrayList<Bar>b){for(Bar x:b)if(Math.abs(x.h-x.l)>.000001||Math.abs(x.o-x.c)>.000001)return true;return false;}
  String historySource(ArrayList<Bar>b){return b.isEmpty()?"Unknown":b.get(b.size()-1).src;}
@@ -280,17 +296,6 @@ z.append("Interpretation").append(fundamentalInterpretation(plain)).append(" Sou
  @Override public void onBackPressed(){if(nav.getVisibility()!=View.VISIBLE){nav.setVisibility(View.VISIBLE);render();}else super.onBackPressed();}
  @Override protected void onDestroy(){super.onDestroy();h.removeCallbacks(autoRefresh);pool.shutdownNow();if(tts!=null){tts.stop();tts.shutdown();}}
 
- // V4.1 Technical Engine: calculated from OHLC history (no invented signals)
- double sma(ArrayList<Bar> b,int n){
-   if(b.size()<n)return 0;
-   double s=0;for(int i=b.size()-n;i<b.size();i++)s+=b.get(i).c;return s/n;
- }
- double rsi(ArrayList<Bar> b,int n){
-   if(b.size()<=n)return 50;
-   double g=0,l=0;
-   for(int i=b.size()-n+1;i<b.size();i++){double d=b.get(i).c-b.get(i-1).c;if(d>0)g+=d;else l-=d;}
-   if(l==0)return 100;
-   return 100-(100/(1+g/l));
  }
  String technicalEngine(ArrayList<Bar> b){
    double r=rsi(b,14), fast=sma(b,12), slow=sma(b,26);
@@ -378,4 +383,3 @@ String extractMetric(String p,String key){
     return "";
 }
 
-}
