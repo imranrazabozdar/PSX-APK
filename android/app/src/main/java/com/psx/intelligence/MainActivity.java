@@ -266,7 +266,6 @@ void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE IF NOT EXISTS watch(id INTEGER PRIMARY KEY AUTOINCREMENT,symbol TEXT,alert REAL)");
     }
     public void onUpgrade(SQLiteDatabase db,int a,int b){}
-    double pnl(String s,double price){Cursor c=getReadableDatabase().rawQuery("SELECT qty,buy FROM portfolio WHERE symbol=?",new String[]{s});double r=0;while(c.moveToNext())r+=(price-c.getDouble(1))*c.getDouble(0);c.close();return r;}
 }
 
 public class MainActivity extends Activity {
@@ -634,22 +633,3 @@ String extractMetric(String p,String key){
     return "";
 }
 
-android.database.sqlite.SQLiteDatabase getReadableDatabase(){
-    if(dbHelper==null){
-        dbHelper=new android.database.sqlite.SQLiteOpenHelper(this,"psx.db",null,1){
-            public void onCreate(android.database.sqlite.SQLiteDatabase db){
-                db.execSQL("CREATE TABLE IF NOT EXISTS portfolio(symbol TEXT,qty REAL,buy REAL,date TEXT)");
-                db.execSQL("CREATE TABLE IF NOT EXISTS signals(symbol TEXT,signal TEXT,result TEXT,date TEXT)");
-            }
-            public void onUpgrade(android.database.sqlite.SQLiteDatabase db,int oldV,int newV){}
-        };
-    }
-    return dbHelper.getReadableDatabase();
-}
-
-android.database.sqlite.SQLiteDatabase getWritableDatabase(){
-    if(dbHelper==null) getReadableDatabase();
-    return dbHelper.getWritableDatabase();
-}
-
-}
