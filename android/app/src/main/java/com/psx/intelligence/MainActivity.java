@@ -250,7 +250,7 @@ void showIntel(Stock s,LinearLayout box,String mode){
    URL u=new URL("https://dps.psx.com.pk/company/"+URLEncoder.encode(s.s,"UTF-8"));HttpURLConnection c=(HttpURLConnection)u.openConnection();c.setConnectTimeout(12000);c.setReadTimeout(12000);c.setRequestProperty("User-Agent","Mozilla/5.0 PSX-Intelligence-V2");
    String html=read(c.getInputStream());String plain=Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY).toString().replace('\u00a0',' ');
    String eps=extractMetric(plain,"EPS"),pat=extractMetric(plain,"Profit after Taxation"),sales=extractMetric(plain,"Sales"),npm=extractMetric(plain,"Net Profit Margin"),gpm=extractMetric(plain,"Gross Profit Margin"),growth=extractMetric(plain,"EPS Growth"),peg=extractMetric(plain,"PEG");
-   StringBuilder z=new StringBuilder();z.append("OFFICIAL PSX FUNDAMENTALS\");
+   StringBuilder z=new StringBuilder();
    if(sales.length()>0)z.append("Sales: ").append(sales).append("");if(pat.length()>0)z.append("Profit after tax: ").append(pat).append("");if(eps.length()>0)z.append("EPS: ").append(eps).append("");if(gpm.length()>0)z.append("Gross margin: ").append(gpm).append("");if(npm.length()>0)z.append("Net margin: ").append(npm).append("");if(growth.length()>0)z.append("EPS growth: ").append(growth).append("");if(peg.length()>0)z.append("PEG: ").append(peg).append("");
    z.append("\Interpretation").append(fundamentalInterpretation(plain)).append("\\Source: PSX company page • values are shown only when present in the source.");
    String result=z.toString();h.post(()->out.setText(result));
@@ -501,7 +501,7 @@ void showIntel(Stock s,LinearLayout box,String mode){
    URL u=new URL("https://dps.psx.com.pk/company/"+URLEncoder.encode(s.s,"UTF-8"));HttpURLConnection c=(HttpURLConnection)u.openConnection();c.setConnectTimeout(12000);c.setReadTimeout(12000);c.setRequestProperty("User-Agent","Mozilla/5.0 PSX-Intelligence-V2");
    String html=read(c.getInputStream());String plain=Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY).toString().replace('\u00a0',' ');
    String eps=extractMetric(plain,"EPS"),pat=extractMetric(plain,"Profit after Taxation"),sales=extractMetric(plain,"Sales"),npm=extractMetric(plain,"Net Profit Margin"),gpm=extractMetric(plain,"Gross Profit Margin"),growth=extractMetric(plain,"EPS Growth"),peg=extractMetric(plain,"PEG");
-   StringBuilder z=new StringBuilder();z.append("OFFICIAL PSX FUNDAMENTALS\");
+   StringBuilder z=new StringBuilder();
    if(sales.length()>0)z.append("Sales: ").append(sales).append("");if(pat.length()>0)z.append("Profit after tax: ").append(pat).append("");if(eps.length()>0)z.append("EPS: ").append(eps).append("");if(gpm.length()>0)z.append("Gross margin: ").append(gpm).append("");if(npm.length()>0)z.append("Net margin: ").append(npm).append("");if(growth.length()>0)z.append("EPS growth: ").append(growth).append("");if(peg.length()>0)z.append("PEG: ").append(peg).append("");
    z.append("\Interpretation").append(fundamentalInterpretation(plain)).append("\\Source: PSX company page • values are shown only when present in the source.");
    String result=z.toString();h.post(()->out.setText(result));
