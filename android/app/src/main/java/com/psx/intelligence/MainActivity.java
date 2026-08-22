@@ -252,7 +252,7 @@ void showIntel(Stock s,LinearLayout box,String mode){
    String eps=extractMetric(plain,"EPS"),pat=extractMetric(plain,"Profit after Taxation"),sales=extractMetric(plain,"Sales"),npm=extractMetric(plain,"Net Profit Margin"),gpm=extractMetric(plain,"Gross Profit Margin"),growth=extractMetric(plain,"EPS Growth"),peg=extractMetric(plain,"PEG");
    StringBuilder z=new StringBuilder();
    if(sales.length()>0)z.append("Sales: ").append(sales).append("");if(pat.length()>0)z.append("Profit after tax: ").append(pat).append("");if(eps.length()>0)z.append("EPS: ").append(eps).append("");if(gpm.length()>0)z.append("Gross margin: ").append(gpm).append("");if(npm.length()>0)z.append("Net margin: ").append(npm).append("");if(growth.length()>0)z.append("EPS growth: ").append(growth).append("");if(peg.length()>0)z.append("PEG: ").append(peg).append("");
-   z.append("\Interpretation").append(fundamentalInterpretation(plain)).append("\\Source: PSX company page • values are shown only when present in the source.");
+z.append("Interpretation").append(fundamentalInterpretation(plain)).append(" Source: PSX company page - values are shown only when present in the source.");
    String result=z.toString();h.post(()->out.setText(result));
   }catch(Exception e){h.post(()->out.setText("Native fundamentals could not be parsed right now. Use the Official PSX Fundamentals button below to view the source directly."));}});}
  
@@ -503,7 +503,7 @@ void showIntel(Stock s,LinearLayout box,String mode){
    String eps=extractMetric(plain,"EPS"),pat=extractMetric(plain,"Profit after Taxation"),sales=extractMetric(plain,"Sales"),npm=extractMetric(plain,"Net Profit Margin"),gpm=extractMetric(plain,"Gross Profit Margin"),growth=extractMetric(plain,"EPS Growth"),peg=extractMetric(plain,"PEG");
    StringBuilder z=new StringBuilder();
    if(sales.length()>0)z.append("Sales: ").append(sales).append("");if(pat.length()>0)z.append("Profit after tax: ").append(pat).append("");if(eps.length()>0)z.append("EPS: ").append(eps).append("");if(gpm.length()>0)z.append("Gross margin: ").append(gpm).append("");if(npm.length()>0)z.append("Net margin: ").append(npm).append("");if(growth.length()>0)z.append("EPS growth: ").append(growth).append("");if(peg.length()>0)z.append("PEG: ").append(peg).append("");
-   z.append("\Interpretation").append(fundamentalInterpretation(plain)).append("\\Source: PSX company page • values are shown only when present in the source.");
+z.append("Interpretation").append(fundamentalInterpretation(plain)).append(" Source: PSX company page - values are shown only when present in the source.");
    String result=z.toString();h.post(()->out.setText(result));
   }catch(Exception e){h.post(()->out.setText("Native fundamentals could not be parsed right now. Use the Official PSX Fundamentals button below to view the source directly."));}});}
  
