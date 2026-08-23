@@ -2,7 +2,8 @@ name: Android Build
 
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -20,10 +21,10 @@ jobs:
           java-version: '17'
 
       - name: Build APK
-        working-directory: android
+        working-directory: ./android
         run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
